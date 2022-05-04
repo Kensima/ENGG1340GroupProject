@@ -63,12 +63,12 @@ void HandCard(int cards[], int cardAI[], int size){
         if (cards[cardnum-1] == -1) cout << "You are selecting a blank card, try again!" << endl;
     }while (cards[cardnum-1] == -1 || cardnum < 1);
 
-    for (int i=0; i<size; i++){
+    for (int i=0; i<20; i++){
         if (cardAI[i] == -1) cardAI[i] = cards[cardnum-1];
     }
-    for(int i=0; i<size; i++){
+    for(int i=0; i<20; i++){
             if(i == cardnum-1){
-                for(int j=i; j<(cardnum-1); j++) cards[j] = cards[j+1];
+                for(int j=i; j<19; j++) cards[j] = cards[j+1];
             cout << "Success!" << endl;
             break;
         }
@@ -202,7 +202,7 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                     cout << "Choose the AI player you want to give card to (2 - 4): ";
                     cin >> choice;
                 }
-                extra[choice] -= 1;
+                extra[choice] += 1;
                 switch (choice){
                     case 2: HandCard(cards, cardsAI1, 20); break;
                     case 3: HandCard(cards, cardsAI2, 20); break;
@@ -619,6 +619,5 @@ int main(){
         return 0;
     }
 }
-
 
 
