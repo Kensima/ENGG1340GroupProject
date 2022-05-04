@@ -28,7 +28,7 @@ bool Judge(int cardsAI[]){
 //Display peeped AI cards
 void PrintAICard(int cardsAI[], int number, int extra){
     cout << "";
-    for (int index = 0; index < number+1+extra; index++){
+    for (int index = 0; index < 20; index++){
         if (cardsAI[index] != -1) cout << cardsAI[index] % 9 + 1 << suits[cardsAI[index] / 9] << " ";
     }
     cout << endl;
@@ -204,9 +204,9 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                 }
                 extra[choice] -= 1;
                 switch (choice){
-                    case 2: HandCard(cards, cardsAI1, size); break;
-                    case 3: HandCard(cards, cardsAI2, size); break;
-                    case 4: HandCard(cards, cardsAI3, size); break;
+                    case 2: HandCard(cards, cardsAI1, 20); break;
+                    case 3: HandCard(cards, cardsAI2, 20); break;
+                    case 4: HandCard(cards, cardsAI3, 20); break;
                 }
                 --extra[0];
                 ++extra[choice-1];
