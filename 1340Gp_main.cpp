@@ -60,13 +60,12 @@ void HandCard(int cards[], int cardAI[], int size){
     do{  
         cout << "Please select your card to give out (No.): ";
         cin >> cardnum;
-        if (cards[cardnum-1] == -1) cout << "You are selecting the blank card" << endl;
+        if (cards[cardnum-1] == -1) cout << "You are selecting a blank card, try again!" << endl;
     }while (cards[cardnum-1] == -1 || cardnum < 1);
 
     for (int i=0; i<size; i++){
         if (cardAI[i] == -1) cardAI[i] = cards[cardnum-1];
     }
-
     for(int i=0; i<size; i++){
             if(i == cardnum-1){
                 for(int j=i; j<(cardnum-1); j++) cards[j] = cards[j+1];
@@ -76,147 +75,138 @@ void HandCard(int cards[], int cardAI[], int size){
     }
 }
 
-void SendCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int order[], int number, int extra[]){   //发牌程序
+void SendCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int order[], int number, int extra[], int judge[]){   //发牌程序
     srand((unsigned)time(NULL));
     int x = rand()%10;
     srand((unsigned)x);
     cards[number+extra[0]] =rand()%35;
-    if (order[1] > number+extra[1]){  //如果已经爆牌就不用发牌了
-        cardsAI1[number+extra[1]] =rand()%35;
+    if (judge[1] == 1){  //如果已经爆牌就不用发牌了
+        cardsAI1[number+extra[1]] = rand()%35;
     }
-    if (order[2] > number+extra[2]){
-        cardsAI2[number+extra[2]] =rand()%35;
+    if (judge[2] == 1){
+        cardsAI2[number+extra[2]] = rand()%35;
     }
-    if (order[3] > number+extra[3]){
-        cardsAI3[number+extra[3]] =rand()%35;
+    if (judge[3] == 1){
+        cardsAI3[number+extra[3]] = rand()%35;
     }
 }
 
 int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int number, int extra[], int size){
-    char ensure = 'N';
-    int card_number, price[4] = {50, 100, 200, 300};
+    int card_number, price[4] = {50, 150, 300, 450};
     int choice=0, peep=0;
     bool alive; // check whether the selected AI is alive
-    while (ensure == 'N')
-    {
-        cout << "-----------------------------" << endl;
-        cout << "-   Welcome to Card Store   -" << endl;
-        cout << "-----------------------------" << endl;
-        cout << "CURRENCY = " << gold << endl;
-        cout << "Card list: " << endl;
-        cout << "1.Peep Card -----------------50$" << endl;
-        cout << "2.Exchanging Card -----------100$" << endl;
-        cout << "3.Discard Card --------------200$" << endl;
-        cout << "4.Handing Over Card ---------300$"  << endl;
-        cout << "Enter the card number to purchase(input 0 to Quit)： ";
+    cout << "-----------------------------" << endl;
+    cout << "-   Welcome to Card Store   -" << endl;
+    cout << "-----------------------------" << endl;
+    cout << "CURRENCY = " << gold << endl;
+    cout << "Card list: " << endl;
+    cout << "1.Peep Card -----------------50$" << endl;
+    cout << "2.Exchanging Card -----------150$" << endl;
+    cout << "3.Discard Card --------------300$" << endl;
+    cout << "4.Handing Over Card ---------450$"  << endl;
+    cout << "Enter the card number to purchase(input 0 to Quit)： ";
+    cin >> card_number;
+    while (card_number < 0 || card_number > 5){
+        cout << "Invalid choice, please try again: ";
         cin >> card_number;
-        while (card_number < 0 || card_number > 5){
-            cout << "Invalid choice, please try again: ";
-            cin >> card_number;
-        }
+    }
+    if (card_number == 0){
+        cout << "Exit the store..." << endl;
+        return gold;
+    }
+    while (gold - price[card_number-1] < 0){
+        cout << "No enough money! Please try other products~: ";
+        cin >> card_number;
         if (card_number == 0){
             cout << "Exit the store..." << endl;
             return gold;
         }
-        if (price[card_number-1] - gold < 0){
-            cout << "Sure?(Y or N): ";
-            cin >> ensure;
-                if (ensure == 'Y'){
-                    cout << "Thank you for your patronage" << endl;
-                    ensure = 'N';
-                }
-                else if (ensure == 'N'){
-                    continue;
-                }
-        }
-        if (price[card_number-1] - gold >= 0){
-            cout << "Not enough money! You can choose other products~" << endl;
-        }
-        else{
-            gold -= price[card_number-1];
-            switch (card_number) {// perform actions according to user input
-                case 1:{ // peep AI cards           
-                    while (peep < 1 || peep > 3){
-                        cout << "Enter the AI player number you want to peep (2 - 4): ";
-                        cin >> peep;
-                        switch (peep){
-                            case 2: alive = Judge(cardsAI1); break;
-                            case 3: alive = Judge(cardsAI2); break;
-                            case 4: alive = Judge(cardsAI3); break;
-                        }
-                        if (alive = false){
-                            cout << "You are choosing a dead player!" << endl;
-                            peep = 0;
-                        }
-                    }
+    }
+    if (card_number > 0 && card_number < 5) {
+        cout << "Thank you for your purchasing!!" << endl;
+        gold -= price[card_number-1];
+        switch (card_number) {// perform actions according to user input
+            case 1:{ // peep AI cards           
+                while (peep < 2 || peep > 4){
+                    cout << "Enter the AI player number you want to peep (2 - 4): ";
+                    cin >> peep;
                     switch (peep){
-                        case 2: PrintAICard(cardsAI1, number, extra); break;
-                        case 3: PrintAICard(cardsAI2, number, extra); break;
-                        case 4: PrintAICard(cardsAI3, number, extra); break;
+                        case 2: alive = Judge(cardsAI1); break;
+                        case 3: alive = Judge(cardsAI2); break;
+                        case 4: alive = Judge(cardsAI3); break;
                     }
-                    break;
+                    if (alive = false){
+                        cout << "You are choosing a dead player!" << endl;
+                        peep = 0;
+                    }
                 }
-                case 2:{ // Exchange cards
-                    cout << "Your current card: ";
-                    PrintAICard(cards, number, extra);
-                    while (choice < 1 || choice > 3){
-                        cout << "Choose the AI player number you want to exchange cards with (2 - 4): ";
-                        cin >> choice;
-                        switch (choice){
-                            case 2: alive = Judge(cardsAI1); break;
-                            case 3: alive = Judge(cardsAI2); break;
-                            case 4: alive = Judge(cardsAI3); break;
-                        }
-                        if (alive = false){
-                            cout << "You are choosing a dead player!" << endl;
-                            choice = 0;
-                        }
-                    }
+                switch (peep){
+                    case 2: PrintAICard(cardsAI1, number, extra); break;
+                    case 3: PrintAICard(cardsAI2, number, extra); break;
+                    case 4: PrintAICard(cardsAI3, number, extra); break;
+                }
+                break;
+            }
+            case 2:{ // Exchange cards
+                cout << "Your current card: ";
+                PrintAICard(cards, number, extra);
+                while (choice < 2 || choice > 4){
+                    cout << "Choose the AI player number you want to exchange cards with (2 - 4): ";
+                    cin >> choice;
                     switch (choice){
-                        case 2: SwapCard(cards, cardsAI1); break;
-                        case 3: SwapCard(cards, cardsAI2); break;
-                        case 4: SwapCard(cards, cardsAI3); break;
+                        case 2: alive = Judge(cardsAI1); break;
+                        case 3: alive = Judge(cardsAI2); break;
+                        case 4: alive = Judge(cardsAI3); break;
                     }
-                    cout << "Your current card: ";
-                    PrintAICard(cards, number, extra);
-                    break;
+                    if (alive = false){
+                        cout << "You are choosing a dead player!" << endl;
+                        choice = 0;
+                    }
                 }
-                case 3:{ // Discard Card
-                    cout << "Your current card: ";
-                    PrintAICard(cards, number, extra);
-                    do{
-                        cout << "Choose the card you want to discard (No.): ";
-                        cin >> choice;
-                        if (cards[choice-1] == -1) cout << "You are choosing a blank card, try again" << endl;
-                    }while (choice < 1 || cards[choice-1] == -1);
-                    for(int i=0; i<size; i++){
-                        if(i == choice-1){
-                            for(int j=i; j<(size-1); j++) cards[j] = cards[j+1];
-                            --extra[0];
-                            cout << "Discard success" << endl;
-                            break;
-                        }
-                    }
-                    cout << "Your current card: ";
-                    PrintAICard(cards, number, extra);
-                    break;
+                switch (choice){
+                    case 2: SwapCard(cards, cardsAI1); break;
+                    case 3: SwapCard(cards, cardsAI2); break;
+                    case 4: SwapCard(cards, cardsAI3); break;
                 }
-                case 4:{ // Hand over card
-                    cout << "Your current card: ";
-                    PrintAICard(cards, number, extra);
-                    while (choice < 1 || choice > 3 || ){
-                        cout << "Choose the AI player you want to give card to (2 - 4): ";
-                        cin >> choice;
+                cout << "Your current card: ";
+                PrintAICard(cards, number, extra);
+                break;
+            }
+            case 3:{ // Discard Card
+                cout << "Your current card: ";
+                PrintAICard(cards, number, extra);
+                do{
+                    cout << "Choose the card you want to discard (No.): ";
+                    cin >> choice;
+                    if (cards[choice-1] == -1) cout << "You are choosing a blank card, try again" << endl;
+                }while (choice < 1 || cards[choice-1] == -1);
+                for(int i=0; i<size; i++){
+                    if(i == choice-1){
+                        for(int j=i; j<(size-1); j++) cards[j] = cards[j+1];
+                        --extra[0];
+                        cout << "Discard success" << endl;
+                        break;
                     }
-                    switch (choice){
-                        case 2: HandCard(cards, cardsAI1, size); break;
-                        case 3: HandCard(cards, cardsAI2, size); break;
-                        case 4: HandCard(cards, cardsAI3, size); break;
-                    }
-                    --extra[0];
-                    ++extra[choice-1];
-                    break;
                 }
+                cout << "Your current card: ";
+                PrintAICard(cards, number, extra);
+                break;
+            }
+            case 4:{ // Hand over card
+                cout << "Your current card: ";
+                PrintAICard(cards, number, extra);
+                while (choice < 2 || choice > 4 ){
+                    cout << "Choose the AI player you want to give card to (2 - 4): ";
+                    cin >> choice;
+                }
+                switch (choice){
+                    case 2: HandCard(cards, cardsAI1, size); break;
+                    case 3: HandCard(cards, cardsAI2, size); break;
+                    case 4: HandCard(cards, cardsAI3, size); break;
+                }
+                --extra[0];
+                ++extra[choice-1];
+                break;
             }
         }
     }
@@ -233,52 +223,70 @@ void PrintCard(int cards[], int number, int extra, int gold, string cardlist[]){
     cout << endl;
 }
 
-bool IfEnd__JudgeGame(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int order[], bool ifend, int number, int SIZE, int extra[]){
+bool IfEnd__JudgeGame(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int order[], bool ifend, int number, int SIZE, int extra[], int judge[]){
     int total1 = 0, total2 = 0, total3 = 0, total4 = 0;  //显示游戏是否结束，以及判断淘汰的玩家
     int elimination = 0;
-    for (int p = 0; p <= 20; p++){
-        if (cards[p] != -1) total1 += cards[p] % 9 + 1;
+    for (int i = 0; i < 4; i++){
+        if (judge[i] == 0){
+            elimination += 1;
+        }
     }
-    for (int p = 0; p <= 20; p++){
-        if (cardsAI1[p] != -1) total2 += cardsAI1[p] % 9 + 1;
-    }
-    for (int p = 0; p <= 20; p++){
-        if (cardsAI2[p] != -1) total3 += cardsAI2[p] % 9 + 1;
-    }
-    for (int p = 0; p <= 20; p++){
-        if (cardsAI3[p] != -1) total4 += cardsAI3[p] % 9 + 1;
-    }
-
-    if (total1 > 21){  //如果自己被淘汰那么游戏直接结束
-        order[0] = number+1+extra[0];
-        cout << "You are eliminated" << endl;
+    if (elimination >= 3){
         ifend = 0;
         return ifend;
     }
-    if (total2 > 21 || total3 > 21 || total4 > 21){  //如果其他玩家被淘汰则会通报
+    else{
+        elimination = 0;
+    }
+    for (int p = 0; p <= number+extra[0]; p++){
+        total1 += cards[p] % 9 + 1;
+    }
+    if (total1 >= 21){
+        ifend = 0;
+        if (total1 > 21){
+            judge[0] = 0;
+            cout << "You are eliminated!!" << endl;
+        }
+        return ifend;
+    }
+    if (judge[1] == 1){
+        for (int p = 0; p <= number+extra[1]; p++){
+            total2 += cardsAI1[p] % 9 + 1;
+        }
         if (total2 > 21){
-            if (order[1] == SIZE){
-                order[1] = number+1+extra[1];
-                cout << "Player2 is eliminated" << endl;
-            }
             elimination += 1;
-        }
-        if (total3 > 21){
-            if (order[2] == SIZE){
-                order[2] = number+1+extra[2];
-                cout << "Player3 is eliminated" << endl;
-            }
-            elimination +=1;
-        }
-        if (total4 > 21){
-            if (order[3] == SIZE){
-                order[3] = number+1+extra[3];
-                cout << "Player4 is eliminated" << endl;
-            }
-            elimination += 1;
+            order[1] = number + 1 + extra[1];
+            cout << "Player2 is eliminated" << endl;
+            judge[1] = 0;
         }
     }
-    if (elimination >= 3){ // 如果其他玩家都被淘汰了那么游戏也会结束
+    if (judge[2] == 1){
+        for (int p = 0; p <= number+extra[2]; p++){
+            total3 += cardsAI2[p] % 9 + 1;
+        }
+        if (total3 > 21){
+            elimination += 1;
+            order[2] = number + 1 + extra[2];
+            cout << "Player3 is eliminated" << endl;
+            judge[2] = 0;
+        }
+    }
+    if (judge[3] == 1){
+        for (int p = 0; p <= number+extra[3]; p++){
+            total4 += cardsAI3[p] % 9 + 1;
+        }
+        if (total4 > 21){
+            elimination += 1;
+            order[3] = number + 1 + extra[3];
+            cout << "Player4 is eliminated" << endl;
+            judge[3] = 0;
+        }
+    }
+    if (total2 == 21 || total3 == 21 || total4 == 21){
+        ifend = 0;
+        return ifend;
+    }
+    if (elimination >= 3 || judge[0] == 0){ // 如果其他玩家都被淘汰了那么游戏也会结束
         ifend = 0;
         return ifend;
     }
@@ -286,7 +294,6 @@ bool IfEnd__JudgeGame(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[
         ifend = 1;
         return ifend;
     }
-    
 }
 
 void ShowEndCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int order[], int rank[], int number, int extra[]){
@@ -329,20 +336,20 @@ void ShowEndCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], in
     cout << setw(15) << "POINTS = " << total4 << endl << endl;
 }
 
-void RankCard(int points[], int order[]){ //显示玩家自己的排名
+void RankCard(int points[], int judge[]){ //显示玩家自己的排名
     int NO = 1;
     for (int k = 1; k < 4; k++){
-        if (order[0] == order[k]){
-            if ((points[0] < points[k] && points[k] < 22) || (points[0] > points[k] && points[0] > 21)){
+        if ((judge[k] == 1 && judge[0] == 1) || (judge[k] == 0 && judge[0] == 0)){
+            if ((points[0] < points[k] && points[k] < 22) || (points[0] > points[k] && points[k] > 21)){
                 NO += 1;
             }
         }
-        if (order[0] < order[k])
+        if (judge[0] == 0 && judge[k] == 1)
         {
             NO += 1;
         }
     }
-    cout << endl <<  "You ranked No." << NO << " !!!";
+    cout << "You ranked NO." << NO << "!!";
 }
 
 int Settingdifficulty(int n){  //调整难度的界面
@@ -352,13 +359,10 @@ int Settingdifficulty(int n){  //调整难度的界面
     if (n == 2){
         cout << "The current difficulty is: NORMAL" << endl;
     }
-    if (n == 3){
-        cout << "The currebt difficulty is: HARD" << endl;
-    }
     char a;
-    cout << "Please choose difficulty(S, N or H): ";
+    cout << "Please choose difficulty(S or N): ";
     cin >> a;
-    while (a != 'S' && a != 'H' && a != 'N'){
+    while (a != 'S' &&  a != 'N'){
         cout << "Invalid selection, please try again: ";
         cin >> a;
     }
@@ -369,10 +373,6 @@ int Settingdifficulty(int n){  //调整难度的界面
     if (a == 'N'){
         cout << "Difficulty set to Normal!" << endl;
         return 2;
-    }
-    if (a == 'H'){
-        cout << "Difficulty set to Hard!" << endl;
-        return 3;
     }
 }
 
@@ -400,14 +400,12 @@ int DrawCards(int cards[], int number, int extra){  //攻击操作成功后，�
     
 }
 
-void Operation1__result(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int choice[], int target[], int gold[], int number, int extra[]){
+int Operation1__result(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int choice[], int target[], int gold, int number, int extra[]){
     for (int i = 0; i < 4; i++){
-        gold[i] += 100;
         if (choice[i] == 1 && choice[target[i]-1] != 2) {   //操作的判定以及结果
-            gold[i] += 100;
-            gold[target[i]-1] -= 100;
             if (target[i] == 1){
                 cout << "You receive: ";
+                gold -= 50;
                 extra[0] = DrawCards(cards, number, extra[0]);
             }
             if (target[i] == 2){
@@ -423,18 +421,22 @@ void Operation1__result(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI
                 extra[3] = DrawCards(cardsAI3, number, extra[3]);
             }
         }
-        if (choice[i] == 1 && choice[target[i]-1] == 2){
-            gold[target[i]-1] += 150;
+        if (i == 0 && choice[i] == 1 && choice[target[i]-1] != 2) { 
+            gold += 100;
         }
-        if (choice[i] == 3)
-        {
-            gold[i] += 200;
+        if (i == 0 && choice[i] == 2){
+            gold += 50;
+        }
+        if (i == 0 && choice[i] == 3){
+            gold += 150;
         }
     }
+    return gold;
 }
 
-void Operation1(int diff, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int order[], int SIZE, int gold[], int number, int extra[])
+int Operation1(int diff, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int order[], int SIZE, int gold, int number, int extra[], int judge[])
 {
+    gold += 50;
     if (diff > 1)   //选择进行操作，AI会随机进行操作如果难度是普通和困难。
     {
         srand((unsigned)time(NULL));
@@ -444,13 +446,13 @@ void Operation1(int diff, int cards[], int cardsAI1[], int cardsAI2[], int cards
         int target[4];
         for (int i = 1; i < 4; i++)
         {
-            if (order[i] == SIZE)
+            if (judge[i] == 1)
             {
                 choice[i] = 1 + rand()%3;
                 if (choice[i] == 1)
                 {
                     target[i] = 1 + rand()%4;
-                    while (target[i] == i+1 || order[target[i]-1] != SIZE)
+                    while (target[i] == i+1 || judge[target[i]-1] == 0)
                     {
                         target[i] = 1 + rand()%4;
                     }
@@ -482,7 +484,7 @@ void Operation1(int diff, int cards[], int cardsAI1[], int cardsAI2[], int cards
         if (Your_option == 'A')
         {
             choice[0] = 1;
-            cout << "Target?: ";
+            cout << "Target? (2 - 4): ";
             int tar;
             cin >> tar;
             while (tar < 2 || tar > 4 || order[tar-1] != SIZE)
@@ -506,7 +508,7 @@ void Operation1(int diff, int cards[], int cardsAI1[], int cardsAI2[], int cards
             }
             else
             {
-                if (order[i] == SIZE)
+                if (judge[i] == 1)
                 {
                     cout << "Player" << i+1 << " choose to ";
                     Print(choice[i], target[i]);
@@ -514,8 +516,9 @@ void Operation1(int diff, int cards[], int cardsAI1[], int cardsAI2[], int cards
             }
         }
         cout << endl;
-        Operation1__result (cards, cardsAI1, cardsAI2, cardsAI3, choice, target, gold, number, extra);
+        gold = Operation1__result (cards, cardsAI1, cardsAI2, cardsAI3, choice, target, gold, number, extra);
     }
+    return gold;
 }
 
 // Initialize arrays to avoid calling unassigned digits
@@ -532,7 +535,7 @@ int main(){
     cout << "----------CATALOGUE----------" << endl << "1:DIFFICULTY" << endl << "2:FILE READING" << endl << "3:STARTING NEW GAME" << endl;
     char cat, diff = 2;
     string cardlist[4] = {"Peep Card", "Exchanging Card", "Discard Card", "Handing Over Card"};
-    int gold[4] = {0, 0, 0, 0}; //玩家所拥有的金钱数量，可通过各种操作获取，可在商店购买道具。
+    int gold = 0; //玩家所拥有的金钱数量，可通过各种操作获取，可在商店购买道具。
     cout << "Your Choice: "; //目录选择
     cin >> cat;
     while (cat <= '0' || cat > '3'){ //错误的输入，提示修改
@@ -552,9 +555,6 @@ int main(){
         if (diff == 2){
             cout << "Normal Game!! Your opponent will not use special cards!!" << endl << endl;
         }
-        if (diff == 3){
-            cout << "Hard Game!!"  << endl << endl;
-        }
         cout << "You can enter the store as game begins (input S)" << endl << endl;
         cout << "Please select the maximum number of rounds(3 to 10): ";
         int SIZE;  //决定回合上限
@@ -567,24 +567,35 @@ int main(){
         int *cardsAI1 = new int[20];
         int *cardsAI2 = new int[20];
         int *cardsAI3 = new int[20];
+        int judge[4] = {1, 1, 1, 1};
         Initialize(cards,20); Initialize(cardsAI1,20); Initialize(cardsAI2,20); Initialize(cardsAI3,20);
         int round[4] = {SIZE, SIZE, SIZE, SIZE}, extra[4] = {0, 0, 0, 0}, number = 0, Y_N = 1, finalcount[4]; //number 是回合数。Y_N是判断游戏是否结束，final count是用来计算排名的
         char key;      // round里面每个都是判断对应玩家是否爆牌，如果爆牌的话数字SIZE会被改成它当前死亡的回合+收到的牌
         while (Y_N && number < SIZE){
             cout << "ROUND " << number+1 << ":   " << "-------------------------------+----------------------------" << endl;
-            SendCard(cards, cardsAI1, cardsAI2, cardsAI3, round, number, extra); //每一回合的发牌程序
-            PrintCard(cards, number, extra[0], gold[0], cardlist); // 打印自己的卡牌
-            Operation1(diff, cards, cardsAI1, cardsAI2, cardsAI3, round, SIZE, gold, number, extra); //特殊操作1，即攻击，防守和中立
-            if (diff != 1) PrintCard(cards, number, extra[0], gold[0], cardlist); //再次打印自己的卡牌
-            Y_N = IfEnd__JudgeGame(cards, cardsAI1, cardsAI2, cardsAI3, round, Y_N, number, SIZE, extra); //判断出局的人，以及自己是否出局，以及游戏是否结束，如果结束了上面while loop 里面的Y_N会变成false。
+            SendCard(cards, cardsAI1, cardsAI2, cardsAI3, round, number, extra, judge); //每一回合的发牌程序
+            PrintCard(cards, number, extra[0], gold, cardlist); // 打印自己的卡牌
+            gold = Operation1(diff, cards, cardsAI1, cardsAI2, cardsAI3, round, SIZE, gold, number, extra, judge); //特殊操作1，即攻击，防守和中立
+            if (diff != 1){
+                PrintCard(cards, number, extra[0], gold, cardlist); //再次打印自己的卡牌
+            }
             number += 1; //发牌和其他操作结束之后回合数目加1.
             cout << "Continue Or Enter the Store (Y, N or S): ";
             cin >> key; //选择游戏是否继续的按键，输入Y就是继续，输入其他就是暂停；
-            while (key == 'S'){
-                gold[0] = Store(gold[0],cards,cardsAI1,cardsAI2,cardsAI3,number,extra,SIZE);
-                cout << "Continue or Not(Y, N or S) : ";
+            while (key != 'S' && key != 'Y' && key != 'N'){
+                cout << "Invalide input, please try again: ";
                 cin >> key;
             }
+            while (key == 'S'){
+                gold = Store(gold,cards,cardsAI1,cardsAI2,cardsAI3,number,extra,SIZE);
+                cout << "Continue or Not(Y or N) : ";
+                cin >> key;
+                while (key != 'Y' && key != 'N'){
+                    cout << "Invalide input, please try again: ";
+                    cin >> key;
+                }
+            }
+            Y_N = IfEnd__JudgeGame(cards, cardsAI1, cardsAI2, cardsAI3, round, Y_N, number, SIZE, extra, judge); //判断出局的人，以及自己是否出局，以及游戏是否结束，如果结束了上面while loop 里面的Y_N会变成false
             if (key == 'Y'){ 
                 continue;
             }
@@ -595,7 +606,7 @@ int main(){
         }
         cout << endl << "-------------------------+++++GAME OVER+++++---------------------------" << endl << endl;
         ShowEndCard(cards, cardsAI1, cardsAI2, cardsAI3, round, finalcount, number, extra); // 显示最终每位玩家的卡牌。
-        RankCard(finalcount, round); //计算排名（仅自己的排名）
+        RankCard(finalcount, judge); //计算排名（仅自己的排名）
         delete [] cards;
         delete [] cardsAI1;
         delete [] cardsAI2;
