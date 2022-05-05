@@ -524,7 +524,37 @@ void Initialize(int cards[], int Size){
     }
 }
 
+void SaveFile(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int number, int extra[], int judge[], int round[], int &size){
+    ofstream fout {"Save.txt"};
+    if (fout.fail()) {
+        cout << "Error in file opening!" << endl;
+        exit(1);
+    }
+    fout << gold << " " << number << " " << size << endl;
+    for (int i=0; i<20; ++i){
+        fout << cards[i] << " " << cardsAI1[i] << " " << cardsAI2[i] << " " << cardsAI3[i] << endl;
+    }
+    for (int i=0; i<4; ++i){
+        fout << extra[i]  << " " << judge[i] << " " << round[i] << endl;
+    }
+    fout.close();
+} 
 
+void ReadFile(int &gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int &number, int extra[], int judge[], int round[], int &size){
+    ifstream fin {"Save.txt"};
+    if (fin.fail()){
+        cout << "Error in file opening!" << endl;
+        exit(1);
+    }
+    fin >> gold >> number >> size;
+    for (int i=0; i<20; ++i){
+        fin >> cards[i] >> cardsAI1[i] >> cardsAI2[i] >> cardsAI3[i];
+    }
+    for (int i=0; i<4; ++i){
+        fin >> extra[i]  >> judge[i] >> round[i];
+    }
+    fin.close();
+}
 
 int main(){
     cout << "Welcome to BlackJack2.0" << endl;
@@ -534,6 +564,15 @@ int main(){
     int gold = 0; //玩家所拥有的金钱数量，可通过各种操作获取，可在商店购买道具。
     cout << "Your Choice: "; //目录选择
     cin >> cat;
+    bool read = false;
+    int SIZE;  //决定回合上限
+    int *cards = new int[20]; // 四个玩家，第一个是自己玩的，剩下三个是AI，这里用了动态记忆管理
+    int *cardsAI1 = new int[20];
+    int *cardsAI2 = new int[20];
+    int *cardsAI3 = new int[20];
+    int judge[4] = {1, 1, 1, 1};
+    int round[4], extra[4] = {0, 0, 0, 0}, number = 0, Y_N = 1, finalcount[4];
+    Initialize(cards,20); Initialize(cardsAI1,20); Initialize(cardsAI2,20); Initialize(cardsAI3,20);
     while (cat <= '0' || cat > '3'){ //错误的输入，提示修改
         cout << "Invalid choice, please try again: ";
         cin >> cat;
@@ -544,6 +583,11 @@ int main(){
         cout << "Your Choice: ";
         cin >> cat;
     }
+    if (cat == '2'){
+        ReadFile(gold, cards, cardsAI1, cardsAI2, cardsAI3, number, extra, judge, round, SIZE);
+        cat = '3';
+        read = true;
+    }
     if (cat == '3'){
         if (diff == 1){ //游戏开始之前显示难度
             cout << "Simple Game!! Your opponent will not take any action!!" << endl << endl;
@@ -552,20 +596,15 @@ int main(){
             cout << "Normal Game!! Your opponent will not use special cards!!" << endl << endl;
         }
         cout << "You can enter the store as game begins (input S)" << endl << endl;
-        cout << "Please select the maximum number of rounds(3 to 10): ";
-        int SIZE;  //决定回合上限
-        cin >> SIZE; 
-        while (SIZE < 3 || SIZE > 10){
-            cout << "Invalid choice, please try again: ";
-            cin >>SIZE;
+        if (read == false){
+            cout << "Please select the maximum number of rounds(3 to 10): ";
+            cin >> SIZE; 
+            while (SIZE < 3 || SIZE > 10){
+                cout << "Invalid choice, please try again: ";
+                cin >>SIZE;
+            }
+            for (int i=0; i<4; ++i) round[i] = SIZE; //number 是回合数。Y_N是判断游戏是否结束，final count是用来计算排名的
         }
-        int *cards = new int[20]; // 四个玩家，第一个是自己玩的，剩下三个是AI，这里用了动态记忆管理
-        int *cardsAI1 = new int[20];
-        int *cardsAI2 = new int[20];
-        int *cardsAI3 = new int[20];
-        int judge[4] = {1, 1, 1, 1};
-        Initialize(cards,20); Initialize(cardsAI1,20); Initialize(cardsAI2,20); Initialize(cardsAI3,20);
-        int round[4] = {SIZE, SIZE, SIZE, SIZE}, extra[4] = {0, 0, 0, 0}, number = 0, Y_N = 1, finalcount[4]; //number 是回合数。Y_N是判断游戏是否结束，final count是用来计算排名的
         char key;      // round里面每个都是判断对应玩家是否爆牌，如果爆牌的话数字SIZE会被改成它当前死亡的回合+收到的牌
         while (Y_N && number < SIZE){
             cout << "ROUND " << number+1 << ":   " << "-------------------------------+----------------------------" << endl;
@@ -596,8 +635,17 @@ int main(){
                 continue;
             }
             if (key == 'N'){
-                cout << "The Game Is Paused By Player...";
-                break;  //这里是暂停页面，你可以从这里加入方程比如暂停之后重新开始游戏或者暂停之后保存游戏
+                cout << "The Game Is Paused By Player..." << endl;
+                cout << "Input S to save, others to break out: ";
+                number += 1;
+                string pause;
+                cin >> pause;
+                if (pause == "S"){
+                    SaveFile(gold, cards, cardsAI1, cardsAI2, cardsAI3, number, extra, judge, round, SIZE);
+                    cout << "File saved!" << endl;
+                }
+                cout << "Game Ending...";
+                exit(1);  //这里是暂停页面，你可以从这里加入方程比如暂停之后重新开始游戏或者暂停之后保存游戏
             }
         }
         cout << endl << "-------------------------+++++GAME OVER+++++---------------------------" << endl << endl;
@@ -610,6 +658,5 @@ int main(){
         return 0;
     }
 }
-
 
 
