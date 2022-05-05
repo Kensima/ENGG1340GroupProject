@@ -183,10 +183,9 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                     cin >> choice;
                     if (cards[choice-1] == -1) cout << "You are choosing a blank card, try again" << endl;
                 }while (choice < 1 || cards[choice-1] == -1);
-                for(int i=0; i<size; i++){
+                for(int i=0; i<20; i++){
                     if(i == choice-1){
-                        for(int j=i; j<(size-1); j++) cards[j] = cards[j+1];
-                        --extra[0];
+                        for(int j=i; j<(20-1); j++) cards[j] = cards[j+1];
                         cout << "Discard success" << endl;
                         break;
                     }
@@ -202,14 +201,14 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                     cout << "Choose the AI player you want to give card to (2 - 4): ";
                     cin >> choice;
                 }
-                extra[choice] += 1;
                 switch (choice){
                     case 2: HandCard(cards, cardsAI1, 20); break;
                     case 3: HandCard(cards, cardsAI2, 20); break;
                     case 4: HandCard(cards, cardsAI3, 20); break;
                 }
-                --extra[0];
                 ++extra[choice-1];
+                cout << "Your current card: ";
+                PrintAICard(cards, number, extra[0]);
                 break;
             }
         }
@@ -304,38 +303,30 @@ bool IfEnd__JudgeGame(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[
 void ShowEndCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int order[], int rank[], int number, int extra[]){
     int total1 = 0, total2 = 0, total3 = 0, total4 = 0;
     cout << "YOUR FINAL CARD: ";
-    for (int index = 0; index < order[0]; index++){
-        if (index < number + extra[0]){
-            total1 += (cards[index] % 9) + 1;
-            cout << cards[index] % 9 + 1 << suits[cards[index] / 9] << " ";  //四个for loop记录每个玩家的最终卡牌以及点数总和
-        }
+    for (int index = 0; index < number + extra[0]; index++){
+        total1 += (cards[index] % 9) + 1;
+        cout << cards[index] % 9 + 1 << suits[cards[index] / 9] << " ";  //四个for loop记录每个玩家的最终卡牌以及点数总和
     }
     rank[0] = total1;
     cout << setw(15) << "POINTS = " << total1 << endl << endl;
     cout << "FINAL CARD OF PLAYER" << 2 << ": ";
-    for (int index = 0; index < order[1]; index++){
-        if (index < number + extra[1]){
-            total2 += (cardsAI1[index] % 9) + 1;
-            cout << cardsAI1[index] % 9 + 1 << suits[cardsAI1[index] / 9] << " ";
-        }
+    for (int index = 0; index < number + extra[1]; index++){
+        total2 += (cardsAI1[index] % 9) + 1;
+        cout << cardsAI1[index] % 9 + 1 << suits[cardsAI1[index] / 9] << " ";
     }
     rank[1] = total2;
     cout << setw(15) << "POINTS = " << total2 << endl << endl;
     cout << "FINAL CARD OF PLAYER" << 3 << ": ";
-    for (int index = 0; index < order[2]; index++){
-        if (index < number + extra[2]){
-            total3 += (cardsAI2[index] % 9) + 1;
-            cout << cardsAI2[index] % 9 + 1 << suits[cardsAI2[index] / 9] << " ";
-        }
+    for (int index = 0; index < number + extra[2]; index++){
+        total3 += (cardsAI2[index] % 9) + 1;
+        cout << cardsAI2[index] % 9 + 1 << suits[cardsAI2[index] / 9] << " ";
     }
     rank[2] = total3;
     cout << setw(15) << "POINTS = " << total3 << endl << endl;
     cout << "FINAL CARD OF PLAYER" << 4 << ": ";
-    for (int index = 0; index < order[3]; index++){
-        if (index < number + extra[3]){
-            total4 += (cardsAI3[index] % 9) + 1;
-            cout << cardsAI3[index] % 9 + 1 << suits[cardsAI3[index] / 9] << " ";
-        }
+    for (int index = 0; index < number + extra[3]; index++){
+        total4 += (cardsAI3[index] % 9) + 1;
+        cout << cardsAI3[index] % 9 + 1 << suits[cardsAI3[index] / 9] << " ";
     }
     rank[3] = total4;
     cout << setw(15) << "POINTS = " << total4 << endl << endl;
@@ -619,5 +610,6 @@ int main(){
         return 0;
     }
 }
+
 
 
