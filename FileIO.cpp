@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include "FileIO.h"
-#include <string>
 using namespace std;
 
 // Save the file as "Save.txt"
