@@ -4,33 +4,34 @@
 #include <string>
 using namespace std;
 
-void SaveCards(int cards[]){
-    ofstream fout {"Save.txt",ios::app};
-    for (int i=0; i<sizeof(cards); i++){
-        fout << cards[i] << " ";
+void SaveFile(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int number, int judge[], int &size){
+    ofstream fout {"Save.txt"};
+    if (fout.fail()) {
+        cout << "Error in file opening!" << endl;
+        exit(1);
     }
-    fout << endl;
-}
+    fout << gold << " " << number << " " << size << endl;
+    for (int i=0; i<20; ++i){
+        fout << cards[i] << " " << cardsAI1[i] << " " << cardsAI2[i] << " " << cardsAI3[i] << endl;
+    }
+    for (int i=0; i<4; ++i){
+        fout << judge[i] << endl;
+    }
+    fout.close();
+} 
 
-void SaveOthers(int a){
-    ofstream fout {"Save.txt",ios::app};
-    fout << a << endl;
-}
-
-void ReadFile(){
+void ReadFile(int &gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int &number, int judge[], int &size){
     ifstream fin {"Save.txt"};
-    int ele,count=0;
-    while (fin >> ele){
-        if (count < 25){
-            switch (count / 5)
-            {
-            case 0: cards[count%5] = ele;
-            case 1: cardsAI1[count%5] = ele;
-            case 2: cardsAI2[count%5] = ele;
-            case 3: cardsAI3[count%5] = ele;
-        }
-        else{
-            
-        }
+    if (fin.fail()){
+        cout << "Error in file opening!" << endl;
+        exit(1);
     }
+    fin >> gold >> number >> size;
+    for (int i=0; i<20; ++i){
+        fin >> cards[i] >> cardsAI1[i] >> cardsAI2[i] >> cardsAI3[i];
+    }
+    for (int i=0; i<4; ++i){
+        fin >> judge[i];
+    }
+    fin.close();
 }
