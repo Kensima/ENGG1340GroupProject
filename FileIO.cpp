@@ -4,6 +4,7 @@
 #include <string>
 using namespace std;
 
+// Save the file as "Save.txt"
 void SaveFile(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int number, int judge[], int &size){
     ofstream fout {"Save.txt"};
     if (fout.fail()) {
@@ -11,7 +12,7 @@ void SaveFile(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI
         exit(1);
     }
     fout << gold << " " << number << " " << size << endl;
-    for (int i=0; i<20; ++i){
+    for (int i=0; i<20; ++i){ // Save card lists in parallel columns
         fout << cards[i] << " " << cardsAI1[i] << " " << cardsAI2[i] << " " << cardsAI3[i] << endl;
     }
     for (int i=0; i<4; ++i){
@@ -20,6 +21,7 @@ void SaveFile(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI
     fout.close();
 } 
 
+// Read "Save.txt" and assign them to the main program
 void ReadFile(int &gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int &number, int judge[], int &size){
     ifstream fin {"Save.txt"};
     if (fin.fail()){

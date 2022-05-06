@@ -435,7 +435,7 @@ int main(){
             cout << "Normal Game!! Your opponent will not use special cards!!" << endl << endl;
         }
         cout << "You can enter the store as game begins (input S)" << endl << endl;
-        if (read == false){
+        if (read == false){ // If the user chose to read data, then start the game immediately without reading number of rounds
             cout << "Please select the maximum number of rounds(3 to 10): ";
             cin >> SIZE; 
             while (SIZE < 3 || SIZE > 10){
