@@ -76,8 +76,8 @@ void HandCard(int cards[], int cardAI[], int size){
 }
 
 int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int number, int size){
-    int card_number, price[4] = {50, 150, 300, 450};
-    int choice=0, peep=0;
+    int price[4] = {50, 150, 300, 450}; // The price of four special cards
+    int card_number, choice=0, peep=0; // Player choices
     bool alive; // check whether the selected AI is alive
     cout << "-----------------------------" << endl;
     cout << "-   Welcome to Card Store   -" << endl;
@@ -98,7 +98,7 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
         cout << "Exit the store..." << endl;
         return gold;
     }
-    while (gold - price[card_number-1] < 0){
+    while (gold - price[card_number-1] < 0){ // Check the availability of the purchase
         cout << "No enough money! Please try other products~: ";
         cin >> card_number;
         if (card_number == 0){
@@ -114,7 +114,7 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                 while (peep < 2 || peep > 4){
                     cout << "Enter the AI player number you want to peep (2 - 4): ";
                     cin >> peep;
-                    switch (peep){
+                    switch (peep){ // You should not peep dead player's card, right?
                         case 2: alive = Judge(cardsAI1); break;
                         case 3: alive = Judge(cardsAI2); break;
                         case 4: alive = Judge(cardsAI3); break;
@@ -137,7 +137,7 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                 while (choice < 2 || choice > 4){
                     cout << "Choose the AI player number you want to exchange cards with (2 - 4): ";
                     cin >> choice;
-                    switch (choice){
+                    switch (choice){ // You should not exchange cards with a dead player, right?
                         case 2: alive = Judge(cardsAI1); break;
                         case 3: alive = Judge(cardsAI2); break;
                         case 4: alive = Judge(cardsAI3); break;
@@ -152,7 +152,7 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                     case 3: SwapCard(cards, cardsAI2); break;
                     case 4: SwapCard(cards, cardsAI3); break;
                 }
-                cout << "Your current card: ";
+                cout << "Your current card: "; // Show your card after the exchange
                 PrintAICard(cards);
                 break;
             }
@@ -164,14 +164,14 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                     cin >> choice;
                     if (cards[choice-1] == -1) cout << "You are choosing a blank card, try again" << endl;
                 }while (choice < 1 || cards[choice-1] == -1);
-                for(int i=0; i<20; i++){
+                for(int i=0; i<20; i++){ // Delete the card from card list by assigning cards[j] = cards[j+1]
                     if(i == choice-1){
                         for(int j=i; j<(20-1); j++) cards[j] = cards[j+1];
                         cout << "Discard success" << endl;
                         break;
                     }
                 }
-                cout << "Your current card: ";
+                cout << "Your current card: "; 
                 PrintAICard(cards);
                 break;
             }
@@ -181,13 +181,21 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                 while (choice < 2 || choice > 4 ){
                     cout << "Choose the AI player you want to give card to (2 - 4): ";
                     cin >> choice;
+                    switch (choice){ // You should not give card to a dead player, right?
+                        case 2: alive = Judge(cardsAI1); break;
+                        case 3: alive = Judge(cardsAI2); break;
+                        case 4: alive = Judge(cardsAI3); break;
+                    }
+                    if (alive = false){
+                        cout << "You are choosing a dead player!" << endl;
+                        choice = 0;
+                    }
                 }
                 switch (choice){
                     case 2: HandCard(cards, cardsAI1, 20); break;
                     case 3: HandCard(cards, cardsAI2, 20); break;
                     case 4: HandCard(cards, cardsAI3, 20); break;
-                }
-  
+                }  
                 cout << "Your current card: ";
                 PrintAICard(cards);
                 break;
