@@ -17,7 +17,8 @@ using namespace std;
 #define DIAMOND "\xE2\x99\xA6"
 const string suits[4] = {SPADE, CLUB, HEART, DIAMOND}; 
 
-void SendCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int number, int judge[]){   //发牌程序
+// Distribute cards randomly
+void SendCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int number, int judge[]){   
     srand((unsigned)time(NULL));
     int x = rand()%10;
     srand((unsigned)x);
@@ -55,7 +56,8 @@ void SendCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int n
     }
 }
 
-void PrintCard(int cards[], int number, int gold, string cardlist[]){ //显示你自己的牌和金钱
+// Print out player's card and currency
+void PrintCard(int cards[], int number, int gold){ 
     int index = 0;
     cout << "YOUR CARD: ";
     for (index = 0; index < 20; index++){
@@ -67,22 +69,23 @@ void PrintCard(int cards[], int number, int gold, string cardlist[]){ //显示�
     cout << endl;
 }
 
+// Judge the result of the game at last
 bool IfEnd__JudgeGame(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], bool ifend, int number, int SIZE,  int judge[]){
-    int total1 = 0, total2 = 0, total3 = 0, total4 = 0;  //显示游戏是否结束，以及判断淘汰的玩家
+    int total1 = 0, total2 = 0, total3 = 0, total4 = 0; 
     int elimination = 0;
     for (int i = 0; i < 4; i++){
         if (judge[i] == 0){
             elimination += 1;
         }
     }
-    if (elimination >= 3){
+    if (elimination >= 3){ // if only one player survive then stop the game immediately
         ifend = 0;
         return ifend;
     }
     else{
         elimination = 0;
     }
-    for (int p = 0; p <= 20; p++){
+    for (int p = 0; p <= 20; p++){ // calculate sum of cards for each player and output if eliminated
         if (cards[p] != -1){
             total1 += cards[p] % 9 + 1;
         }
@@ -140,23 +143,24 @@ bool IfEnd__JudgeGame(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[
         ifend = 0;
         return ifend;
     }
-    if (elimination >= 3 || judge[0] == 0){ // 如果其他玩家都被淘汰了那么游戏也会结束
+    if (elimination >= 3 || judge[0] == 0){ // Judge again whether only one player survive or not
         ifend = 0;
         return ifend;
     }
-    else{ //如果你存活且场上至少还剩下两名玩家，则游戏继续
+    else{ //If not then continue
         ifend = 1;
         return ifend;
     }
 }
 
+// If the game ends, display all cards of players
 void ShowEndCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int rank[]){
     int total1 = 0, total2 = 0, total3 = 0, total4 = 0;
     cout << "YOUR FINAL CARD: ";
     for (int index = 0; index < 20; index++){
         if (cards[index] != -1){
             total1 += (cards[index] % 9) + 1;
-            cout << cards[index] % 9 + 1 << suits[cards[index] / 9] << " ";  //四个for loop记录每个玩家的最终卡牌以及点数总和
+            cout << cards[index] % 9 + 1 << suits[cards[index] / 9] << " ";  
         }
     }
     rank[0] = total1;
@@ -190,7 +194,8 @@ void ShowEndCard(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], in
     cout << setw(15) << "POINTS = " << total4 << endl << endl;
 }
 
-void RankCard(int points[], int judge[]){ //显示玩家自己的排名
+// Show player's rank after showing cards of every player
+void RankCard(int points[], int judge[]){ 
     int NO = 1;
     for (int k = 1; k < 4; k++){
         if ((judge[k] == 1 && judge[0] == 1) || (judge[k] == 0 && judge[0] == 0)){
@@ -206,7 +211,9 @@ void RankCard(int points[], int judge[]){ //显示玩家自己的排名
     cout << "You ranked NO." << NO << "!!";
 }
 
-int Settingdifficulty(int n){  //调整难度的界面
+// Difficulty setting
+// If the game is simple, AIs would not take any actions. If the game is normal, AIs would randomly attack or defense
+int Settingdifficulty(int n){  
     if (n == 1){
         cout << "The current difficulty is: SIMPLE" << endl;
     }
@@ -230,7 +237,8 @@ int Settingdifficulty(int n){  //调整难度的界面
     }
 }
 
-void Print(int choice, int target)  //操作1的播报，比如自己干嘛了，player2 干嘛了之类的。
+// Print out every player's movement after each round
+void Print(int choice, int target)  
 {
     if (choice == 1){
         cout << "Attack---> Player" << target << endl;;
@@ -243,7 +251,8 @@ void Print(int choice, int target)  //操作1的播报，比如自己干嘛了�
     }
 }
 
-void DrawCards(int cards[]){  //攻击操作成功后，触发被攻击对象被迫摸一张牌
+// If a player is attacked, then he or she would be forced to draw a card
+void DrawCards(int cards[]){  
     srand((unsigned)time(NULL));
     int x = rand()%1000000000;
     srand((unsigned)x);
@@ -257,9 +266,10 @@ void DrawCards(int cards[]){  //攻击操作成功后，触发被攻击对象被
 
 }
 
+// Print out the results of every player's movements
 int Operation1__result(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int choice[], int target[], int gold){
     for (int i = 0; i < 4; i++){
-        if (choice[i] == 1 && choice[target[i]-1] != 2) {   //操作的判定以及结果
+        if (choice[i] == 1 && choice[target[i]-1] != 2) { 
             if (target[i] == 1){
                 cout << "You receive: ";
                 gold -= 50;
@@ -278,7 +288,7 @@ int Operation1__result(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3
                 DrawCards(cardsAI3);
             }
         }
-        if (i == 0 && choice[i] == 1 && choice[target[i]-1] != 2) { 
+        if (i == 0 && choice[i] == 1 && choice[target[i]-1] != 2) { // Provide money for the player according to the action
             gold += 100;
         }
         if (i == 0 && choice[i] == 2){
@@ -291,10 +301,11 @@ int Operation1__result(int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3
     return gold;
 }
 
+// This is the main action
 int Operation1(int diff, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[], int SIZE, int gold, int number, int judge[])
 {
     gold += 50;
-    if (diff > 1)   //选择进行操作，AI会随机进行操作如果难度是普通和困难。
+    if (diff > 1) 
     {
         srand((unsigned)time(NULL));
         int x = rand()%10000;
@@ -380,45 +391,44 @@ int Operation1(int diff, int cards[], int cardsAI1[], int cardsAI2[], int cardsA
 
 // Initialize arrays to avoid calling unassigned digits
 void Initialize(int cards[], int Size){
-    for (int i=0; i<Size; ++i){
+    for (int i=0; i<Size; ++i){ 
         cards[i] = -1;
     }
 }
 
 int main(){
-    cout << "Welcome to BlackJack2.0" << endl;
-    cout << "----------CATALOGUE----------" << endl << "1:DIFFICULTY" << endl << "2:FILE READING" << endl << "3:STARTING NEW GAME" << endl;
-    char cat, diff = 2;
-    string cardlist[4] = {"Peep Card", "Exchanging Card", "Discard Card", "Handing Over Card"};
-    int gold = 0; //玩家所拥有的金钱数量，可通过各种操作获取，可在商店购买道具。
-    cout << "Your Choice: "; //目录选择
-    cin >> cat;
-    bool read = false;
-    int SIZE;  //决定回合上限
-    int *cards = new int[20]; // 四个玩家，第一个是自己玩的，剩下三个是AI，这里用了动态记忆管理
+    bool read = false; // A label to judge whether the player uses saved files to start the game or not
+    int SIZE;  //The maximum number of turns determined by the player
+    int *cards = new int[20]; // card lists of four players
     int *cardsAI1 = new int[20];
     int *cardsAI2 = new int[20];
     int *cardsAI3 = new int[20];
-    int judge[4] = {1, 1, 1, 1};
-    int round[4], number = 0, Y_N = 1, finalcount[4];
-    Initialize(cards,20); Initialize(cardsAI1,20); Initialize(cardsAI2,20); Initialize(cardsAI3,20);
-    while (cat <= '0' || cat > '3'){ //错误的输入，提示修改
+    int judge[4] = {1, 1, 1, 1}; // If the player is alive then 1, otherwise 0
+    int number = 0, Y_N = 1, finalcount[4]; // number is current turns, Y_N is the flag determining whether the game ends or not, final count is the final rank of four players
+    Initialize(cards,20); Initialize(cardsAI1,20); Initialize(cardsAI2,20); Initialize(cardsAI3,20); // initialize all four card lists
+    cout << "Welcome to BlackJack2.0" << endl;
+    cout << "----------CATALOGUE----------" << endl << "1:DIFFICULTY" << endl << "2:FILE READING" << endl << "3:STARTING NEW GAME" << endl;
+    char cat, diff = 2; // cat is the choice of the player, diff is difficulty (Normal in default)
+    int gold = 0; // The money held by the player to purchase special cards in Store
+    cout << "Your Choice: "; 
+    cin >> cat;
+    while (cat <= '0' || cat > '3'){ //Exception handling
         cout << "Invalid choice, please try again: ";
         cin >> cat;
     }
-    while (cat == '1'){ // 修改难度
+    while (cat == '1'){ // Change the difficulty of the game
         diff = Settingdifficulty(diff);
         cout << "----------CATALOGUE----------" << endl << "1:DIFFICULTY" << endl << "2:FILE READING" << endl << "3:STARTING NEW GAME" << endl;
         cout << "Your Choice: ";
         cin >> cat;
     }
-    if (cat == '2'){
+    if (cat == '2'){ // Read data from saved files
         ReadFile(gold, cards, cardsAI1, cardsAI2, cardsAI3, number, judge, SIZE);
         cat = '3';
         read = true;
     }
     if (cat == '3'){
-        if (diff == 1){ //游戏开始之前显示难度
+        if (diff == 1){ //Display difficulty before game starts
             cout << "Simple Game!! Your opponent will not take any action!!" << endl << endl;
         }
         if (diff == 2){
@@ -431,25 +441,24 @@ int main(){
             while (SIZE < 3 || SIZE > 10){
                 cout << "Invalid choice, please try again: ";
                 cin >>SIZE;
-            }
-            for (int i=0; i<4; ++i) round[i] = SIZE; //number 是回合数。Y_N是判断游戏是否结束，final count是用来计算排名的
+            } 
         }
-        char key;      // round里面每个都是判断对应玩家是否爆牌，如果爆牌的话数字SIZE会被改成它当前死亡的回合+收到的牌
+        char key; // Player's Choice
         while (Y_N && number < SIZE){
             cout << "ROUND " << number+1 << ":   " << "-------------------------------+----------------------------" << endl;
-            SendCard(cards, cardsAI1, cardsAI2, cardsAI3, number, judge); //每一回合的发牌程序
-            PrintCard(cards, number, gold, cardlist); // 打印自己的卡牌
-            gold = Operation1(diff, cards, cardsAI1, cardsAI2, cardsAI3, SIZE, gold, number, judge); //特殊操作1，即攻击，防守和中立
+            SendCard(cards, cardsAI1, cardsAI2, cardsAI3, number, judge); //Send cards to every player
+            PrintCard(cards, number, gold); // Show your card
+            gold = Operation1(diff, cards, cardsAI1, cardsAI2, cardsAI3, SIZE, gold, number, judge); // Attack, defend, or neutral
             if (diff != 1){
-                PrintCard(cards, number, gold, cardlist); //再次打印自己的卡牌
+                PrintCard(cards, number, gold); //Print your card again after each round
             }
             cout << "Continue Or Enter the Store (Y, N or S): ";
-            cin >> key; //选择游戏是否继续的按键，输入Y就是继续，输入其他就是暂停；
+            cin >> key; // Y to continue and N to pause
             while (key != 'S' && key != 'Y' && key != 'N'){
-                cout << "Invalide input, please try again: ";
+                cout << "Invalid input, please try again: ";
                 cin >> key;
             }
-            while (key == 'S'){
+            while (key == 'S'){ // Enter the store
                 gold = Store(gold,cards,cardsAI1,cardsAI2,cardsAI3,number,SIZE);
                 cout << "Continue or Not(Y or N) : ";
                 cin >> key;
@@ -458,12 +467,12 @@ int main(){
                     cin >> key;
                 }
             }
-            Y_N = IfEnd__JudgeGame(cards, cardsAI1, cardsAI2, cardsAI3, Y_N, number, SIZE, judge); //判断出局的人，以及自己是否出局，以及游戏是否结束，如果结束了上面while loop 里面的Y_N会变成false
+            Y_N = IfEnd__JudgeGame(cards, cardsAI1, cardsAI2, cardsAI3, Y_N, number, SIZE, judge); // End game judge
             if (key == 'Y'){ 
                 number += 1;
                 continue;
             }
-            if (key == 'N'){
+            if (key == 'N'){ // Save the game or just break out
                 cout << "The Game Is Paused By Player..." << endl;
                 cout << "Input S to save, others to break out: ";
                 number += 1;
@@ -474,12 +483,12 @@ int main(){
                     cout << "File saved!" << endl;
                 }
                 cout << "Game Ending...";
-                exit(1);  //这里是暂停页面，你可以从这里加入方程比如暂停之后重新开始游戏或者暂停之后保存游戏
+                exit(1);  
             }
         }
         cout << endl << "-------------------------+++++GAME OVER+++++---------------------------" << endl << endl;
-        ShowEndCard(cards, cardsAI1, cardsAI2, cardsAI3, finalcount); // 显示最终每位玩家的卡牌。
-        RankCard(finalcount, judge); //计算排名（仅自己的排名）
+        ShowEndCard(cards, cardsAI1, cardsAI2, cardsAI3, finalcount); // Display cards after game ends
+        RankCard(finalcount, judge); //Display rank of every player
         delete [] cards;
         delete [] cardsAI1;
         delete [] cardsAI2;
@@ -487,5 +496,4 @@ int main(){
         return 0;
     }
 }
-
 
