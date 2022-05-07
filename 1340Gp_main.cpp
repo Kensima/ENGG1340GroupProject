@@ -1,12 +1,8 @@
 #include <iostream>
-#include <cmath>
 #include <string>
-#include <fstream>
 #include <iomanip>
 #include <cstdlib>
 #include <ctime>
-#include <stdlib.h>
-#include <algorithm>
 #include "FileIO.h"
 #include "Store.h"
 using namespace std;

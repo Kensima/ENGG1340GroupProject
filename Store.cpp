@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "Store.h"
+#include <algorithm>
 using namespace std;
 #define SPADE   "\xE2\x99\xA0"  // define four different suits
 #define CLUB    "\xE2\x99\xA3"
