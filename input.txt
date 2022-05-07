@@ -1,0 +1,15 @@
+make 1340Gp_main
+./1340Gp_main
+
+3
+3
+A
+3
+Y
+D
+Y
+N
+S
+3
+2
+Y
