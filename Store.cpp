@@ -80,7 +80,7 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
     int price[4] = {50, 150, 300, 450}; // The price of four special cards
     int card_number, choice=0, peep=0; // Player choices
     bool alive; // check whether the selected AI is alive
-    cout << "-----------------------------" << endl;
+    cout << "-----------------------------" << endl; // Display card list
     cout << "-   Welcome to Card Store   -" << endl;
     cout << "-----------------------------" << endl;
     cout << "CURRENCY = " << gold << endl;
@@ -95,7 +95,7 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
         cout << "Invalid choice, please try again: ";
         cin >> card_number;
     }
-    if (card_number == 0){
+    if (card_number == 0){ // exit the store and return gold after purchase
         cout << "Exit the store..." << endl;
         return gold;
     }
@@ -125,7 +125,7 @@ int Store(int gold, int cards[], int cardsAI1[], int cardsAI2[], int cardsAI3[],
                         peep = 0;
                     }
                 }
-                switch (peep){
+                switch (peep){ // Display peeped cards
                     case 2: PrintAICard(cardsAI1); break;
                     case 3: PrintAICard(cardsAI2); break;
                     case 4: PrintAICard(cardsAI3); break;
