@@ -91,22 +91,18 @@ Third: New store system and currency mechanism, which gives players the privileg
 List of non-standard C/C++ libraries:
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #include < iostream >
-  
-#include < cmath >
-  
+    
 #include < string > 
   
-#include < fstream >
+#include < fstream > --- FileIO
   
-#include < iomanip >
+#include < iomanip > --- set precision of output
   
 #include < cstdlib > --- "new" and dymamic array establishment
   
 #include < ctime > --- generate unsigned time for random generation of cards
   
-#include < stdlib.h > 
-  
-#include < algorithm >
+#include < algorithm > --- to use swap() function
   
 #include "FileIO.h"
   
